@@ -1,0 +1,28 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+pd.set_option('display.max_columns', None)
+os.chdir('C:/Users/pc/PycharmProjects/PandasProject1')
+
+data = pd.read_csv('C:/Users/pc/PycharmProjects/PandasProject1/cereal.csv')
+data = data.drop(columns = ['name', 'mfr', 'type', 'shelf', 'weight', 'cups', 'rating'], axis = 1)
+corr_data = data.corr()
+adjusted_data = corr_data.iloc[1:,:-1] #Vì là DataFrame nên sử dung index location
+
+one_like = np.ones_like(corr_data, dtype = bool)
+mask = np.triu(one_like, k=0)
+adjusted_mask = mask[1:, :-1] #Tạo mask có cùng kích thước với DataFrame
+
+
+fig, ax = plt.subplots(figsize = (10,6))
+cmap = sns.diverging_palette(0, 230, 90, 60, as_cmap = True)
+sns.heatmap(adjusted_data, cmap = cmap, mask = adjusted_mask, annot = True, fmt = '.2f', vmin = -1, vmax = 1)
+xtick = [i.upper() for i in adjusted_data.index]
+ytick = [i.upper() for i in adjusted_data.columns]
+ax.set_xticklabels(xtick, rotation = 0, fontsize = 9)
+ax.set_yticklabels(ytick, rotation = 0, fontsize = 9)
+ax.set_title('CORRELATION BETWEEN NUTRITION SUBSTANCES')
+
+plt.show()
